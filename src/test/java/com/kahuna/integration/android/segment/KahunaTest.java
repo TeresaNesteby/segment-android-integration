@@ -1,9 +1,10 @@
-package com.segment.analytics.android.integrations.kahuna;
+package com.kahuna.integration.android.segment;
 
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.text.TextUtils;
+
 import com.kahuna.sdk.EmptyCredentialsException;
 import com.kahuna.sdk.Kahuna;
 import com.kahuna.sdk.KahunaCommon;
