@@ -43,15 +43,15 @@ task kahunaSegmentIntegrationReleaseJar(type: Jar, dependsOn: assembleRelease) {
     description = "Create KahunaSegmentIntegration.jar."
 
     from "build/intermediates/classes/release/"
-    include 'com/kahuna/integration/android/segment/**'
+    include 'com/kahuna/integration/android/segment/kahuna/**'
     archiveName 'KahunaSegmentIntegration.jar'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId 'com.kahuna.integration.android'
-            artifactId 'segment'
+            groupId 'com.kahuna.integration.android.segment'
+            artifactId 'kahuna'
             version kahunaSegmentIntegrationVersion
             artifact 'build/libs/KahunaSegmentIntegration.jar'
         }
