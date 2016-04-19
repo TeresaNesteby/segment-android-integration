@@ -47,6 +47,55 @@ task kahunaSegmentIntegrationReleaseJar(type: Jar, dependsOn: assembleRelease) {
     archiveName 'KahunaSegmentIntegration.jar'
 }
 
+
+// Javadoc bag of joy
+android.libraryVariants.all { variant ->
+    task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+        description "Generates Javadoc for $variant.name."
+        source = variant.javaCompile.source
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PUBLIC;
+        failOnError = false;
+        include '**/KahunaIntegration.java';
+    }
+}
+
+task createJavadocBundle(type: Zip, dependsOn: "generateReleaseJavadoc") {
+    description = "Create javadoc.zip for Kahuna's public Javadoc."
+    archiveName = "javadoc.zip";
+    from "${projectDir}/build/docs/javadoc"
+    include '**'
+}
+
+task createKahunaBundle(type: Zip) {
+    archiveName = "KahunaSegmentIntegration.zip";
+    description = "Create KahunaSegmentIntegration.zip bundle that includes Kahuna.jar, CHANGELOG, and javadoc.zip"
+
+    from ("./") {
+        include 'CHANGELOG.md'
+    }
+    from ("build/distributions") {
+        include 'javadoc.zip'
+    }
+    from ("build/libs") {
+        include 'KahunaSegmentIntegration.jar'
+    }
+
+    into 'KahunaSegmentIntegration';
+}
+
+createKahunaBundle.dependsOn kahunaSegmentIntegrationReleaseJar, createJavadocBundle
+
+// lint and Java8 don't mix well.
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -86,5 +135,3 @@ dependencies {
     testCompile 'org.powermock:powermock-api-mockito:1.6.2'
     testCompile 'org.powermock:powermock-classloading-xstream:1.6.2'
 }
-
-//apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
