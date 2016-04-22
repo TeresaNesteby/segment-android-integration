@@ -1,4 +1,4 @@
-package com.segment.analytics.android.integrations.kahuna;
+package com.kahuna.integration.android.segment.kahuna;
 
 import android.app.Activity;
 import android.content.Context;
