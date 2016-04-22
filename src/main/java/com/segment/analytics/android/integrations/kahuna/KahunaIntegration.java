@@ -162,15 +162,17 @@ public class KahunaIntegration extends Integration<Void> {
 
   Event getKahunaEventForSegmentEventNameAndProperties(String eventName, Properties properties) {
     EventBuilder eventBuilder = new EventBuilder(eventName);
-    for (String propertyKey : properties.keySet()) {
-      eventBuilder.addProperty(propertyKey, properties.getString(propertyKey));
-    }
+    if (properties != null && properties.size() > 0) {
+      for (String propertyKey : properties.keySet()) {
+        eventBuilder.addProperty(propertyKey, properties.getString(propertyKey));
+      }
 
-    int quantity = properties.getInt("quantity", -1);
-    double revenue = properties.revenue();
-    if (quantity != -1 || revenue != 0) {
-      // Kahuna requires revenue in cents.
-      eventBuilder.setPurchaseData(quantity, (int) (revenue * 100));
+      int quantity = properties.getInt("quantity", -1);
+      double revenue = properties.revenue();
+      if (quantity != -1 || revenue != 0) {
+        // Kahuna requires revenue in cents.
+        eventBuilder.setPurchaseData(quantity, (int) (revenue * 100));
+      }
     }
 
     return eventBuilder.build();
